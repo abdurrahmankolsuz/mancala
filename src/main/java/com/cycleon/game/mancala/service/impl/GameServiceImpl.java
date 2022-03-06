@@ -2,7 +2,10 @@ package com.cycleon.game.mancala.service.impl;
 
 import com.cycleon.game.mancala.config.Constants;
 import com.cycleon.game.mancala.dto.GameDto;
+import com.cycleon.game.mancala.exception.EmptyPocketException;
+import com.cycleon.game.mancala.exception.GameNotFoundException;
 import com.cycleon.game.mancala.exception.InvalidPocketIndexException;
+import com.cycleon.game.mancala.exception.OpponentPocketNotAllowedException;
 import com.cycleon.game.mancala.mapper.GameMapper;
 import com.cycleon.game.mancala.model.Board;
 import com.cycleon.game.mancala.model.Game;
@@ -12,9 +15,7 @@ import com.cycleon.game.mancala.repository.GameRepository;
 import com.cycleon.game.mancala.service.GameService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +60,7 @@ public class GameServiceImpl implements GameService {
     public GameDto getGame(Integer id) {
         if (gameRepository.findById(id).isPresent())
             return gameMapper.toDTO(gameRepository.findById(id).get());
-
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found.");
+        throw new GameNotFoundException(id);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class GameServiceImpl implements GameService {
         if (gameRepository.findById(id).isPresent())
             game = gameRepository.findById(id).get();
         else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found.");
+            throw new GameNotFoundException(id);
         }
         Board board = game.getBoard();
 
@@ -85,14 +85,14 @@ public class GameServiceImpl implements GameService {
 
         if (game.getPlayerTurn().equals(PlayerTurn.PLAYER_SOUTH) && pocketIndex > Constants.PLAYER_ONE_MANCALA_INDEX ||
                 game.getPlayerTurn().equals(PlayerTurn.PLAYER_NORTH) && pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
-            throw new InvalidPocketIndexException(pocketIndex);
+            throw new OpponentPocketNotAllowedException();
 
 
         Pocket selectedPocket = board.getPockets().stream().filter(p -> p.getPocketIdentifier().equals(pocketIndex)).findFirst().get();
         Integer stonesInPocket = selectedPocket.getQuantityOfStones();
 
         if (stonesInPocket.equals(Constants.EMPTY_STONE))
-            throw new InvalidPocketIndexException(pocketIndex);
+            throw new EmptyPocketException();
 
         selectedPocket.setQuantityOfStones(Constants.EMPTY_STONE);
 
