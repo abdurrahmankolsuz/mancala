@@ -6,7 +6,7 @@ public class Constants {
   public static final int EMPTY_STONE = 0;
   public static final int POCKET_FIRST_INDEX = 1;
   public static final int POCKET_LAST_INDEX = 14;
-  public static final int DEFAULT_STONES = 4;
+  public static final int STONES = 4;
 
   private Constants() {}
 }

@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class BoardMapperImpl implements BoardMapper {
@@ -29,7 +31,7 @@ public class BoardMapperImpl implements BoardMapper {
                 entity.getPockets()) {
             pocketDtoList.add(pocketMapper.toDTO(pocket));
         }
-        boardDto.setPockets(pocketDtoList);
+        boardDto.setPockets(pocketDtoList.stream().sorted(Comparator.comparing(PocketDto::getPocketIdentifier)).collect(Collectors.toList()));
         return boardDto;
     }
 

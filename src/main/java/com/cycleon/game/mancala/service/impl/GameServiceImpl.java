@@ -2,7 +2,7 @@ package com.cycleon.game.mancala.service.impl;
 
 import com.cycleon.game.mancala.config.Constants;
 import com.cycleon.game.mancala.dto.GameDto;
-import com.cycleon.game.mancala.dto.PocketDto;
+import com.cycleon.game.mancala.exception.InvalidPocketIndexException;
 import com.cycleon.game.mancala.mapper.GameMapper;
 import com.cycleon.game.mancala.model.Board;
 import com.cycleon.game.mancala.model.Game;
@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,7 +33,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public GameDto createNewGame(Integer numberOfSeeds) {
+    public GameDto createNewGame() {
         Game game = new Game();
         Board board = new Board();
 
@@ -46,40 +44,37 @@ public class GameServiceImpl implements GameService {
             if (index == Constants.PLAYER_ONE_MANCALA_INDEX || index == Constants.PLAYER_TWO_MANCALA_INDEX)
                 pocket.setQuantityOfStones(Constants.EMPTY_STONE);
             else
-                pocket.setQuantityOfStones(Constants.DEFAULT_STONES);
+                pocket.setQuantityOfStones(Constants.STONES);
             pocket.setBoard(board);
             pockets.add(pocket);
         }
         board.setPockets(pockets);
         game.setBoard(board);
         gameRepository.saveAndFlush(game);
-        log.info("Game: {} registered successfully!", game.getId());
+        log.info("Game: {} created successfully!", game.getId());
         return gameMapper.toDTO(game);
     }
 
     @Override
-    public GameDto getGameInstance(Integer id) {
+    public GameDto getGame(Integer id) {
         if (gameRepository.findById(id).isPresent())
             return gameMapper.toDTO(gameRepository.findById(id).get());
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found.");
     }
 
-    public Game getGame(Integer id) {
-        if (gameRepository.findById(id).isPresent())
-            return gameRepository.findById(id).get();
-
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found.");
-    }
-
     @Override
-    public Game move(Integer id, Integer pocketIndex) {
-
-        Game game = this.getGame(id);
+    public GameDto move(Integer id, Integer pocketIndex) {
+        Game game;
+        if (gameRepository.findById(id).isPresent())
+            game = gameRepository.findById(id).get();
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found.");
+        }
         Board board = game.getBoard();
 
         if (pocketIndex.equals(Constants.PLAYER_ONE_MANCALA_INDEX) || pocketIndex.equals(Constants.PLAYER_TWO_MANCALA_INDEX))
-            return game;
+            throw new InvalidPocketIndexException(pocketIndex);
 
         if (game.getPlayerTurn() == null) {
             if (pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
@@ -90,14 +85,14 @@ public class GameServiceImpl implements GameService {
 
         if (game.getPlayerTurn().equals(PlayerTurn.PLAYER_SOUTH) && pocketIndex > Constants.PLAYER_ONE_MANCALA_INDEX ||
                 game.getPlayerTurn().equals(PlayerTurn.PLAYER_NORTH) && pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
-            return game;
+            throw new InvalidPocketIndexException(pocketIndex);
 
 
         Pocket selectedPocket = board.getPockets().stream().filter(p -> p.getPocketIdentifier().equals(pocketIndex)).findFirst().get();
         Integer stonesInPocket = selectedPocket.getQuantityOfStones();
 
         if (stonesInPocket.equals(Constants.EMPTY_STONE))
-            return game;
+            throw new InvalidPocketIndexException(pocketIndex);
 
         selectedPocket.setQuantityOfStones(Constants.EMPTY_STONE);
 
@@ -117,14 +112,7 @@ public class GameServiceImpl implements GameService {
         game.setIsOver(checkGameOver(game));
         gameRepository.saveAndFlush(game);
 
-        return game;
-    }
-
-    @Override
-    public GameDto gameToDTO(Game game) {
-        GameDto gameDTO = gameMapper.toDTO(game);
-        gameDTO.getBoard().setPockets(gameDTO.getBoard().getPockets().stream().sorted(Comparator.comparing(PocketDto::getPocketIdentifier)).collect(Collectors.toList()));
-        return gameDTO;
+        return gameMapper.toDTO(game);
     }
 
     private void moveRight(Game game, Boolean isLastStone) {
