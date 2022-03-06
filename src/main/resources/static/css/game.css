@@ -1,0 +1,77 @@
+* { box-sizing: border-box; }
+
+body { font-family: sans-serif; }
+
+/* ---- grid ---- */
+
+.grid {
+    max-width: 1200px;
+    max-height: 305px;
+    margin-bottom: 25px;
+}
+
+/* clearfix */
+.grid:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.amount {
+    text-align: center;
+    display: block;
+}
+
+.pocketImage {
+    height: 85%;
+}
+
+/* ---- grid-item ---- */
+
+.grid-item {
+    width: 160px;
+    height: 152px;
+    float: left;
+}
+
+.grid-item-pocket {
+    background: url('../images/pocket.png') no-repeat center;
+    cursor: pointer;
+}
+
+.grid-item-main-pocket {
+    background: url('../images/mancala.png') no-repeat center;
+}
+
+.grid-item--width2 { width: 120px; }
+.grid-item--height2 { height: 305px; }
+.last-main-pocket {margin-top: -150px;}
+
+
+/*---- grid stone ---- */
+
+.grid-stone{
+    max-width: 98px;
+    max-height: 152px;
+    margin: 31px auto auto;
+}
+
+.grid-stone:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.grid-item-stone{
+    float: left;
+    width: 16px;
+    height: 16px;
+}
+
+.stoneImage {
+    width: 100%;
+    height: 100%;
+}
+.badge{
+    display: block;
+}
