@@ -19,8 +19,8 @@ public class Game  extends EntityBase {
     @JoinColumn(name="board_id")
     private Board board;
 
-    @Column (columnDefinition = "boolean default false")
-    private Boolean isOver;
+    @Column
+    private GameStatus gameStatus;
 
     private PlayerTurn playerTurn;
 

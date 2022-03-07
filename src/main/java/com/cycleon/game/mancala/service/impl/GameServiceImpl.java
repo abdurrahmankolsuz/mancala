@@ -7,14 +7,12 @@ import com.cycleon.game.mancala.exception.GameNotFoundException;
 import com.cycleon.game.mancala.exception.InvalidPocketIndexException;
 import com.cycleon.game.mancala.exception.OpponentPocketNotAllowedException;
 import com.cycleon.game.mancala.mapper.GameMapper;
-import com.cycleon.game.mancala.model.Board;
-import com.cycleon.game.mancala.model.Game;
-import com.cycleon.game.mancala.model.PlayerTurn;
-import com.cycleon.game.mancala.model.Pocket;
+import com.cycleon.game.mancala.model.*;
 import com.cycleon.game.mancala.repository.GameRepository;
 import com.cycleon.game.mancala.service.GameService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,11 +24,13 @@ public class GameServiceImpl implements GameService {
 
     private final GameRepository gameRepository;
     private final GameMapper gameMapper;
+    private final SimpMessagingTemplate websocket;
 
     @Autowired
-    public GameServiceImpl(GameRepository gameRepository, GameMapper gameMapper) {
+    public GameServiceImpl(GameRepository gameRepository, GameMapper gameMapper, SimpMessagingTemplate websocket) {
         this.gameRepository = gameRepository;
         this.gameMapper = gameMapper;
+        this.websocket = websocket;
     }
 
     @Override
@@ -51,6 +51,7 @@ public class GameServiceImpl implements GameService {
         }
         board.setPockets(pockets);
         game.setBoard(board);
+        game.setGameStatus(GameStatus.NEW);
         gameRepository.saveAndFlush(game);
         log.info("Game: {} created successfully!", game.getId());
         return gameMapper.toDTO(game);
@@ -109,10 +110,22 @@ public class GameServiceImpl implements GameService {
         if (!currentPocketIndex.equals(Constants.PLAYER_ONE_MANCALA_INDEX) && !currentPocketIndex.equals(Constants.PLAYER_TWO_MANCALA_INDEX))
             game.setPlayerTurn(nextTurn(game.getPlayerTurn()));
 
-        game.setIsOver(checkGameOver(game));
+        game.setGameStatus(checkGameOver(game) ? GameStatus.OVER : GameStatus.IN_PROGRESS);
         gameRepository.saveAndFlush(game);
 
-        return gameMapper.toDTO(game);
+        GameDto gameDto = gameMapper.toDTO(game);
+        notifyGame(gameDto);
+        return gameDto;
+    }
+
+    @Override
+    public List<GameDto> getAllAvailableGames() {
+        List<GameDto> gameDtoList = new ArrayList<>();
+        for (Game game :
+                gameRepository.findGamesByGameStatusEquals(GameStatus.NEW)) {
+            gameDtoList.add(gameMapper.toDTO(game));
+        }
+        return gameDtoList;
     }
 
 
@@ -145,7 +158,7 @@ public class GameServiceImpl implements GameService {
         }
 
         Pocket oppositePocket = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(Constants.POCKET_LAST_INDEX - finalCurrentPocketIndex)).findFirst().get();
-        if (targetPocket.getQuantityOfStones().equals(Constants.EMPTY_STONE)) {
+        if (targetPocket.getQuantityOfStones().equals(Constants.EMPTY_STONE) && oppositePocket.getQuantityOfStones().equals(Constants.EMPTY_STONE)) {
             Integer numberOfOppositePocket = oppositePocket.getQuantityOfStones();
             oppositePocket.setQuantityOfStones(Constants.EMPTY_STONE);
             Integer currentPlayerMancalaIndex = getCurrentPlayerMancalaIndex(currentPocketIndex);
@@ -186,4 +199,9 @@ public class GameServiceImpl implements GameService {
         }
         return false;
     }
+
+    private void notifyGame(GameDto gameDto) {
+        websocket.convertAndSend(Constants.MESSAGE_PREFIX + Constants.GAME_STATUS, gameDto);
+    }
+
 }

@@ -26,21 +26,23 @@ class Result extends React.Component {
             <Card footer={footer}>
                 <div className="flex flex-column">
                     <div
-                        className="flex align-items-center justify-content-center"> GAME OVER
+                        className="flex align-items-center justify-content-center"><span>GAME OVER</span>
                     </div>
                     <div
-                        className="flex align-items-center justify-content-center"> PLAYER ONE STONES
+                        className="flex align-items-center justify-content-center"><span>PLAYER ONE STONES</span>
                         : {this.props.northStones}
                     </div>
                     <div
-                        className="flex align-items-center justify-content-center">PLAYER TWO STONES : {this.props.southStones}
+                        className="flex align-items-center justify-content-center">
+                        <span> PLAYER TWO STONES : {this.props.southStones}</span>
                     </div>
                     <div
-                        className="flex align-items-center justify-content-center">  {this.props.winner}
+                        className="flex align-items-center justify-content-center"><span> {this.props.winner}</span>
                     </div>
                 </div>
             </Card>);
     }
 
 }
+
 export default Result

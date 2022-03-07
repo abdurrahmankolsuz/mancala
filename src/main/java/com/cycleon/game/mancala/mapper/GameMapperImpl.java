@@ -21,7 +21,7 @@ public class GameMapperImpl implements GameMapper {
         gameDto.setId(entity.getId());
                 gameDto.setBoard(boardMapper.toDTO(entity.getBoard()));
         gameDto.setPlayerTurn(entity.getPlayerTurn());
-        gameDto.setIsOver(entity.getIsOver());
+        gameDto.setGameStatus(entity.getGameStatus());
         return gameDto;
     }
 
@@ -30,7 +30,7 @@ public class GameMapperImpl implements GameMapper {
         Game game = new Game();
         game.setId(dto.getId());
         game.setBoard(boardMapper.toEntity(dto.getBoard()));
-        game.setIsOver(dto.getIsOver());
+        game.setGameStatus(dto.getGameStatus());
         game.setPlayerTurn(dto.getPlayerTurn());
 
         return game;

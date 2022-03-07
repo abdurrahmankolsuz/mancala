@@ -8,5 +8,10 @@ public class Constants {
   public static final int POCKET_LAST_INDEX = 14;
   public static final int STONES = 4;
 
+  public static final String MESSAGE_PREFIX = "/topic";
+  public static final String APP_PREFIX = "/api/game";
+  public static final String STOMP_ENDPOINT = "/stomp-endpoint";
+  public static final String GAME_STATUS = "/game";
+
   private Constants() {}
 }

@@ -55,7 +55,7 @@ class Game extends React.Component {
     }
 
     render() {
-        if (this.state.game.isOver) {
+        if (this.state.game.gameStatus === "OVER") {
             const northStones = this.state.game.board.pockets[13].quantityOfStones;
             const southStones = this.state.game.board.pockets[6].quantityOfStones;
             const winner = northStones > southStones ? "Winner is PLAYER ONE" : "Winner is PLAYER TWO";

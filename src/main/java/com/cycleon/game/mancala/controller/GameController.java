@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "api/game")
@@ -26,6 +28,12 @@ public class GameController {
     public ResponseEntity<GameDto> getGameData(@RequestParam Integer id) {
         GameDto gameDto = gameService.getGame(id);
         return ResponseEntity.ok(gameDto);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<GameDto>> getAllAvailableGames() {
+        List<GameDto> gameDtoList = gameService.getAllAvailableGames();
+        return ResponseEntity.ok(gameDtoList);
     }
 
     @PostMapping

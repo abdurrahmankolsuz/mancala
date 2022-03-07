@@ -2,6 +2,8 @@ package com.cycleon.game.mancala.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -30,6 +32,7 @@ public class EntityBase {
     protected String createdBy;
 
     @CreatedDate
+    @CreationTimestamp
     @Temporal(TIMESTAMP)
     protected Date createdDate;
 
@@ -38,6 +41,7 @@ public class EntityBase {
     protected String updatedBy;
 
     @LastModifiedDate
+    @UpdateTimestamp
     @Temporal (TIMESTAMP)
     protected Date updatedDate;
 
