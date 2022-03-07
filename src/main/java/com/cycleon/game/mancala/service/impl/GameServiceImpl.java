@@ -54,6 +54,7 @@ public class GameServiceImpl implements GameService {
         game.setGameStatus(GameStatus.NEW);
         gameRepository.saveAndFlush(game);
         log.info("Game: {} created successfully!", game.getId());
+
         return gameMapper.toDTO(game);
     }
 
@@ -204,4 +205,7 @@ public class GameServiceImpl implements GameService {
         websocket.convertAndSend(Constants.MESSAGE_PREFIX + Constants.GAME_STATUS, gameDto);
     }
 
+    private void notifyGameList(List<GameDto> gameDtoList) {
+        websocket.convertAndSend(Constants.MESSAGE_PREFIX + Constants.AVAILABLE_GAMES, gameDtoList);
+    }
 }

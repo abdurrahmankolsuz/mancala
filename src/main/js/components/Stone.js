@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {Component} from 'react'
 
-export default class Stone extends React.Component {
+export default class Stone extends Component {
     createStones() {
         let stones = [];
         for (let j = 0; j < this.props.stone; j++) {

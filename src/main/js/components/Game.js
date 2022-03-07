@@ -1,27 +1,44 @@
-import React from "react";
+import React, {Component} from "react";
 import 'primeflex/primeflex.css'
 import 'primereact/resources/themes/arya-orange/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Stone from "./Stone";
 import axios from "axios";
-import {GAME_MOVE_URL, GET_GAME_URL, RESPONSE_OK} from "../constants/constants";
+import {
+    GAME_MOVE_URL,
+    GET_GAME_URL,
+    RESPONSE_OK,
+    TOPIC_GAME_AVAILABLE_URL,
+    TOPIC_GAME_STATUS
+} from "../constants/constants";
 import Result from "./Result";
+import wsClient from "../ws-client";
 
-class Game extends React.Component {
+class Game extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             game: this.props.game
         };
+        const websocket = new wsClient();
+        websocket.connect();
+        websocket.subscribe(TOPIC_GAME_STATUS, this.updateGameStatus.bind(this));
 
     }
 
-    componentDidMount() {
-        this.getGame();
-    }
+    updateGameStatus(message) {
+        let returnMessage = JSON.parse(message.body);
+        console.log("xxxx "+ returnMessage)
+        this.setState({
+            game: returnMessage
+        })
 
+    }
+    // componentDidMount() {
+    //     this.getGame();
+    // }
 
     getGame() {
         axios.get(GET_GAME_URL, {

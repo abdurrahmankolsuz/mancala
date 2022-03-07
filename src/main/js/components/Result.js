@@ -1,10 +1,10 @@
 import {Card} from "primereact/card";
-import React from "react";
+import React, {Component} from "react";
 import {Button} from "primereact/button";
 import * as ReactDOM from "react-dom";
 import App from "../App";
 
-class Result extends React.Component {
+class Result extends Component {
 
     constructor(props) {
         super(props);
