@@ -49,6 +49,8 @@ class Game extends React.Component {
                     game: res.data
                 })
             }
+        }).catch(err => {
+            alert(err.response.data.message)
         });
     }
 
@@ -58,13 +60,13 @@ class Game extends React.Component {
             const southStones = this.state.game.board.pockets[6].quantityOfStones;
             const winner = northStones > southStones ? "Winner is PLAYER ONE" : "Winner is PLAYER TWO";
             return (
-                <Result winner={winner} northStones={northStones} southStones={southStones} />
+                <Result winner={winner} northStones={northStones} southStones={southStones}/>
             )
-        }else {
+        } else {
             return (
                 <div className="p-megamenu">
                     <h2><span
-                        className={this.state.game.playerTurn === "PLAYER_NORTH" ? 'badge badge-success' : 'badge badge-secondary'}
+                        className={this.state.game.playerTurn === "PLAYER_ONE" ? 'badge badge-success' : 'badge badge-secondary'}
                         style={{display: 'block'}}>Player 1</span>
                     </h2>
                     <div className="grid">
@@ -138,7 +140,7 @@ class Game extends React.Component {
                         </div>
                     </div>
                     <h2><span name="player2"
-                              className={this.state.game.playerTurn === "PLAYER_SOUTH" ? 'badge badge-success' : 'badge badge-secondary'}
+                              className={this.state.game.playerTurn === "PLAYER_TWO" ? 'badge badge-success' : 'badge badge-secondary'}
                               style={{display: 'block'}}>Player 2</span></h2>
                 </div>
             );

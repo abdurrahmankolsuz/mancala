@@ -1,18 +1,13 @@
 package com.cycleon.game.mancala.controller;
 
 
-import com.cycleon.game.mancala.config.Constants;
 import com.cycleon.game.mancala.dto.GameDto;
 import com.cycleon.game.mancala.dto.MoveRequestDto;
-import com.cycleon.game.mancala.exception.InvalidPocketIndexException;
-import com.cycleon.game.mancala.model.Game;
 import com.cycleon.game.mancala.service.GameService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController

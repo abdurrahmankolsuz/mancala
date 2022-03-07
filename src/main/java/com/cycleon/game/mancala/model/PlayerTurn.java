@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum PlayerTurn {
-    PLAYER_NORTH, PLAYER_SOUTH
+    PLAYER_ONE, PLAYER_TWO
 }

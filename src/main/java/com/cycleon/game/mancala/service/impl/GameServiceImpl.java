@@ -78,13 +78,13 @@ public class GameServiceImpl implements GameService {
 
         if (game.getPlayerTurn() == null) {
             if (pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
-                game.setPlayerTurn(PlayerTurn.PLAYER_SOUTH);
+                game.setPlayerTurn(PlayerTurn.PLAYER_TWO);
             else
-                game.setPlayerTurn(PlayerTurn.PLAYER_NORTH);
+                game.setPlayerTurn(PlayerTurn.PLAYER_ONE);
         }
 
-        if (game.getPlayerTurn().equals(PlayerTurn.PLAYER_SOUTH) && pocketIndex > Constants.PLAYER_ONE_MANCALA_INDEX ||
-                game.getPlayerTurn().equals(PlayerTurn.PLAYER_NORTH) && pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
+        if (game.getPlayerTurn().equals(PlayerTurn.PLAYER_TWO) && pocketIndex > Constants.PLAYER_ONE_MANCALA_INDEX ||
+                game.getPlayerTurn().equals(PlayerTurn.PLAYER_ONE) && pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
             throw new OpponentPocketNotAllowedException();
 
 
@@ -115,11 +115,24 @@ public class GameServiceImpl implements GameService {
         return gameMapper.toDTO(game);
     }
 
+
+    /*
+        13   12   11   10   9    8
+    14                               7
+         1    2    3   4   5    6
+
+   *If the last stone drops into an empty pocket owned by the player, and the opposite pocket contains stones,
+    both the last stone and the opposite stones are captured and placed into the player's mancala.
+   *If the last stone drops into the player's mancala,
+   the player gets an additional move. There is no limit on the number of moves a player can make in their turn.
+
+     */
+
     private void moveRight(Game game, Boolean isLastStone) {
         Integer currentPocketIndex = game.getCurrentPocketIndex() % Constants.POCKET_LAST_INDEX + 1;
         PlayerTurn playerTurn = game.getPlayerTurn();
-        if (currentPocketIndex.equals(Constants.PLAYER_ONE_MANCALA_INDEX) && playerTurn.equals(PlayerTurn.PLAYER_NORTH) ||
-                currentPocketIndex.equals(Constants.PLAYER_TWO_MANCALA_INDEX) && playerTurn.equals(PlayerTurn.PLAYER_SOUTH)) {
+        if (currentPocketIndex.equals(Constants.PLAYER_ONE_MANCALA_INDEX) && playerTurn.equals(PlayerTurn.PLAYER_ONE) ||
+                currentPocketIndex.equals(Constants.PLAYER_TWO_MANCALA_INDEX) && playerTurn.equals(PlayerTurn.PLAYER_TWO)) {
             currentPocketIndex = currentPocketIndex % Constants.POCKET_LAST_INDEX + 1;
         }
         game.setCurrentPocketIndex(currentPocketIndex);
@@ -132,31 +145,36 @@ public class GameServiceImpl implements GameService {
         }
 
         Pocket oppositePocket = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(Constants.POCKET_LAST_INDEX - finalCurrentPocketIndex)).findFirst().get();
-        if (targetPocket.getQuantityOfStones().equals(Constants.EMPTY_STONE) && oppositePocket.getQuantityOfStones().equals(Constants.EMPTY_STONE)) {
-            Integer oppositeSeeds = oppositePocket.getQuantityOfStones();
+        if (targetPocket.getQuantityOfStones().equals(Constants.EMPTY_STONE)) {
+            Integer numberOfOppositePocket = oppositePocket.getQuantityOfStones();
             oppositePocket.setQuantityOfStones(Constants.EMPTY_STONE);
-            Integer pocketHouseIndex = currentPocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX ? Constants.PLAYER_ONE_MANCALA_INDEX : Constants.PLAYER_TWO_MANCALA_INDEX;
-            Pocket pocketHouse = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(pocketHouseIndex)).findFirst().get();
-            pocketHouse.setQuantityOfStones(pocketHouse.getQuantityOfStones() + oppositeSeeds + 1);
+            Integer currentPlayerMancalaIndex = getCurrentPlayerMancalaIndex(currentPocketIndex);
+            Pocket currentPlayerMancala = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(currentPlayerMancalaIndex)).findFirst().get();
+            currentPlayerMancala.setQuantityOfStones(currentPlayerMancala.getQuantityOfStones() + numberOfOppositePocket + 1);
             return;
         }
         targetPocket.setQuantityOfStones(targetPocket.getQuantityOfStones() + 1);
     }
 
+    private Integer getCurrentPlayerMancalaIndex(Integer currentPocketIndex) {
+        Integer currentPlayerMancalaIndex = currentPocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX ? Constants.PLAYER_ONE_MANCALA_INDEX : Constants.PLAYER_TWO_MANCALA_INDEX;
+        return currentPlayerMancalaIndex;
+    }
+
     private PlayerTurn nextTurn(PlayerTurn currentTurn) {
-        if (currentTurn.equals(PlayerTurn.PLAYER_NORTH))
-            return PlayerTurn.PLAYER_SOUTH;
-        return PlayerTurn.PLAYER_NORTH;
+        if (currentTurn.equals(PlayerTurn.PLAYER_ONE))
+            return PlayerTurn.PLAYER_TWO;
+        return PlayerTurn.PLAYER_ONE;
     }
 
     private boolean checkGameOver(Game game) {
         Integer playerOneStones = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier() >= Constants.POCKET_FIRST_INDEX && p.getPocketIdentifier() < Constants.PLAYER_ONE_MANCALA_INDEX).mapToInt(Pocket::getQuantityOfStones).sum();
         Integer playerTwoStones = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier() > Constants.PLAYER_ONE_MANCALA_INDEX && p.getPocketIdentifier() < Constants.PLAYER_TWO_MANCALA_INDEX).mapToInt(Pocket::getQuantityOfStones).sum();
         if (playerOneStones.equals(0) || playerTwoStones.equals(0)) {
-            Pocket houseSouth = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(Constants.PLAYER_ONE_MANCALA_INDEX)).findFirst().get();
-            Pocket houseNorth = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(Constants.PLAYER_TWO_MANCALA_INDEX)).findFirst().get();
-            houseSouth.setQuantityOfStones(houseSouth.getQuantityOfStones() + playerOneStones);
-            houseNorth.setQuantityOfStones(houseNorth.getQuantityOfStones() + playerTwoStones);
+            Pocket playerOneMancala = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(Constants.PLAYER_ONE_MANCALA_INDEX)).findFirst().get();
+            Pocket playerTwoMancala = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(Constants.PLAYER_TWO_MANCALA_INDEX)).findFirst().get();
+            playerOneMancala.setQuantityOfStones(playerOneMancala.getQuantityOfStones() + playerOneStones);
+            playerTwoMancala.setQuantityOfStones(playerTwoMancala.getQuantityOfStones() + playerTwoStones);
 
             game.getBoard().getPockets().forEach(pocket -> {
                 if (pocket.getPocketIdentifier() != Constants.PLAYER_ONE_MANCALA_INDEX && pocket.getPocketIdentifier() != Constants.PLAYER_TWO_MANCALA_INDEX) {
