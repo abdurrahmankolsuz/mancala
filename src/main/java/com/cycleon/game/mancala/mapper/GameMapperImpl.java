@@ -19,7 +19,9 @@ public class GameMapperImpl implements GameMapper {
     public GameDto toDTO(Game entity) {
         GameDto gameDto = new GameDto();
         gameDto.setId(entity.getId());
-                gameDto.setBoard(boardMapper.toDTO(entity.getBoard()));
+        gameDto.setBoard(boardMapper.toDTO(entity.getBoard()));
+        gameDto.setPlayerOne(entity.getPlayerOne());
+        gameDto.setPlayerTwo(entity.getPlayerTwo());
         gameDto.setPlayerTurn(entity.getPlayerTurn());
         gameDto.setGameStatus(entity.getGameStatus());
         return gameDto;
@@ -30,6 +32,8 @@ public class GameMapperImpl implements GameMapper {
         Game game = new Game();
         game.setId(dto.getId());
         game.setBoard(boardMapper.toEntity(dto.getBoard()));
+        game.setPlayerOne(dto.getPlayerOne());
+        game.setPlayerTwo(dto.getPlayerTwo());
         game.setGameStatus(dto.getGameStatus());
         game.setPlayerTurn(dto.getPlayerTurn());
 

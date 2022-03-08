@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public enum GameStatus {
-    NEW, IN_PROGRESS, OVER
+    NEW, WAITING, IN_PROGRESS, OVER
 }

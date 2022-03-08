@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 public class GameDto {
     private Integer id;
     private BoardDto board;
+    private PlayerTurn playerOne;
+    private PlayerTurn playerTwo;
     private GameStatus gameStatus;
     @Enumerated(EnumType.STRING)
     private PlayerTurn playerTurn;

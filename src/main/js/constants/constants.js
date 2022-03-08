@@ -1,5 +1,6 @@
 export const CREATE_GAME_URL = 'api/game';
 export const GET_GAME_URL = 'api/game';
+export const JOIN_GAME_URL = 'api/game/join';
 export const GET_AVAILABLE_GAME_URL = 'api/game/all';
 export const GAME_MOVE_URL = 'api/game/move';
 

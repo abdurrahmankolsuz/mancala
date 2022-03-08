@@ -13,14 +13,20 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "GAME")
-public class Game  extends EntityBase {
+public class Game extends EntityBase {
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="board_id")
+    @JoinColumn(name = "board_id")
     private Board board;
 
     @Column
     private GameStatus gameStatus;
+
+    @Column
+    private PlayerTurn playerOne;
+
+    @Column
+    private PlayerTurn playerTwo;
 
     private PlayerTurn playerTurn;
 

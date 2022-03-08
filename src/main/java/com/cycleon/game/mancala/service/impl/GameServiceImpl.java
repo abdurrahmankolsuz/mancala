@@ -2,10 +2,7 @@ package com.cycleon.game.mancala.service.impl;
 
 import com.cycleon.game.mancala.config.Constants;
 import com.cycleon.game.mancala.dto.GameDto;
-import com.cycleon.game.mancala.exception.EmptyPocketException;
-import com.cycleon.game.mancala.exception.GameNotFoundException;
-import com.cycleon.game.mancala.exception.InvalidPocketIndexException;
-import com.cycleon.game.mancala.exception.OpponentPocketNotAllowedException;
+import com.cycleon.game.mancala.exception.*;
 import com.cycleon.game.mancala.mapper.GameMapper;
 import com.cycleon.game.mancala.model.*;
 import com.cycleon.game.mancala.repository.GameRepository;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -55,6 +53,27 @@ public class GameServiceImpl implements GameService {
         gameRepository.saveAndFlush(game);
         log.info("Game: {} created successfully!", game.getId());
 
+        return gameMapper.toDTO(game);
+    }
+
+    @Override
+    public GameDto joinGame(Integer gameId) {
+        Game game;
+        if (gameRepository.findById(gameId).isPresent())
+            game = gameRepository.findById(gameId).get();
+        else {
+            throw new GameNotFoundException(gameId);
+        }
+        if (Objects.isNull(game.getPlayerOne())) {
+            game.setPlayerOne(PlayerTurn.PLAYER_ONE);
+            game.setGameStatus(GameStatus.WAITING);
+        } else if (Objects.isNull(game.getPlayerTwo())) {
+            game.setPlayerTwo(PlayerTurn.PLAYER_TWO);
+            game.setGameStatus(GameStatus.IN_PROGRESS);
+        } else {
+            throw new InvalidGameException(gameId);
+        }
+        gameRepository.saveAndFlush(game);
         return gameMapper.toDTO(game);
     }
 
@@ -123,7 +142,7 @@ public class GameServiceImpl implements GameService {
     public List<GameDto> getAllAvailableGames() {
         List<GameDto> gameDtoList = new ArrayList<>();
         for (Game game :
-                gameRepository.findGamesByGameStatusEquals(GameStatus.NEW)) {
+                gameRepository.findGamesByGameStatusNot(GameStatus.OVER)) {
             gameDtoList.add(gameMapper.toDTO(game));
         }
         return gameDtoList;

@@ -2,6 +2,7 @@ package com.cycleon.game.mancala.controller;
 
 
 import com.cycleon.game.mancala.dto.GameDto;
+import com.cycleon.game.mancala.dto.JoinRequestDto;
 import com.cycleon.game.mancala.dto.MoveRequestDto;
 import com.cycleon.game.mancala.service.GameService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,12 @@ public class GameController {
     @PostMapping
     public ResponseEntity<GameDto> createGame() {
         return ResponseEntity.ok(gameService.createNewGame());
+    }
+
+    @PostMapping("/join")
+    public ResponseEntity<GameDto> joinGame(@RequestBody JoinRequestDto joinRequestDto) {
+        GameDto gameDto = gameService.joinGame(joinRequestDto.getGameId());
+        return ResponseEntity.ok(gameDto);
     }
 
     @PostMapping("/move")

@@ -8,6 +8,8 @@ import java.util.List;
 public interface GameService {
     GameDto createNewGame();
 
+    GameDto joinGame(Integer gameId);
+
     GameDto getGame(Integer id);
 
     GameDto move(Integer id, Integer pocketIndex);
