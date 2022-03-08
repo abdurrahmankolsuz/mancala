@@ -1,7 +1,7 @@
 package com.cycleon.game.mancala.service.impl;
 
 import com.cycleon.game.mancala.dto.GameDto;
-import com.cycleon.game.mancala.model.PlayerTurn;
+import com.cycleon.game.mancala.model.Player;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +36,7 @@ public class GameServiceImplTest {
     public void moveRight() {
         GameDto createGameInstance = gameService.createNewGame();
         GameDto gameDto = gameService.move(createGameInstance.getId(), 8);
-        BDDAssertions.then(gameDto.getPlayerTurn()).isEqualTo(PlayerTurn.PLAYER_TWO);
+        BDDAssertions.then(gameDto.getPlayerTurn()).isEqualTo(Player.PLAYER_TWO);
         BDDAssertions.then(gameDto.getBoard().getPockets().get(0).getQuantityOfStones()).isEqualTo(4);
         BDDAssertions.then(gameDto.getBoard().getPockets().get(1).getQuantityOfStones()).isEqualTo(4);
         BDDAssertions.then(gameDto.getBoard().getPockets().get(2).getQuantityOfStones()).isEqualTo(4);

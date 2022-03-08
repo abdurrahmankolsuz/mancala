@@ -1,13 +1,10 @@
 package com.cycleon.game.mancala.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Setter
@@ -23,12 +20,12 @@ public class Game extends EntityBase {
     private GameStatus gameStatus;
 
     @Column
-    private PlayerTurn playerOne;
+    private Player playerOne;
 
     @Column
-    private PlayerTurn playerTwo;
+    private Player playerTwo;
 
-    private PlayerTurn playerTurn;
+    private Player playerTurn;
 
     @JsonIgnore
     private int currentPocketIndex;

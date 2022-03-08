@@ -3,20 +3,15 @@ import 'primeflex/primeflex.css'
 import 'primereact/resources/themes/arya-orange/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import Game from "./components/Game.js";
+import GameBoardOne from "./components/GameBoardOne.js";
 import * as ReactDOM from "react-dom";
 import {Button} from "primereact/button";
 import axios from "axios";
-import {
-    CREATE_GAME_URL,
-    GET_AVAILABLE_GAME_URL,
-    GET_GAME_URL,
-    JOIN_GAME_URL,
-    RESPONSE_OK
-} from "/src/main/js/constants/constants";
+import {CREATE_GAME_URL, GET_AVAILABLE_GAME_URL, JOIN_GAME_URL, RESPONSE_OK} from "/src/main/js/constants/constants";
 import {Menubar} from "primereact/menubar";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
+import GameBoardTwo from "./components/GameBoardTwo";
 
 class App extends React.Component {
 
@@ -58,12 +53,24 @@ class App extends React.Component {
                 this.setState({
                     game: res.data
                 }, () => {
-                    ReactDOM.render(
-                        <Game game={this.state.game}/>,
-                        document.getElementById('root')
-                    )
+                    debugger;
+                    if (this.state.game.playerTwo) {
+                        ReactDOM.render(
+                            <GameBoardTwo game={this.state.game}/>,
+                            document.getElementById('root')
+                        )
+                    } else {
+                        ReactDOM.render(
+                            <GameBoardOne game={this.state.game}/>,
+                            document.getElementById('root')
+                        )
+                    }
+
+
                 });
             }
+        }).catch(err => {
+            alert(err.response.data.message)
         });
 
 

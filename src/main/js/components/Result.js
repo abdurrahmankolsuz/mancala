@@ -25,20 +25,10 @@ class Result extends Component {
         return (
             <Card footer={footer}>
                 <div className="flex flex-column">
-                    <div
-                        className="flex align-items-center justify-content-center"><span>GAME OVER</span>
-                    </div>
-                    <div
-                        className="flex align-items-center justify-content-center"><span>PLAYER ONE STONES</span>
-                        : {this.props.northStones}
-                    </div>
-                    <div
-                        className="flex align-items-center justify-content-center">
-                        <span> PLAYER TWO STONES : {this.props.southStones}</span>
-                    </div>
-                    <div
-                        className="flex align-items-center justify-content-center"><span> {this.props.winner}</span>
-                    </div>
+                    <div className="flex align-items-center justify-content-center"><span>GAME OVER</span></div>
+                    <div className="flex align-items-center justify-content-center"><span>PLAYER ONE STONES : {this.props.northStones}</span></div>
+                    <div className="flex align-items-center justify-content-center"><span> PLAYER TWO STONES : {this.props.southStones}</span></div>
+                    <div className="flex align-items-center justify-content-center"><span> {this.props.winner}</span></div>
                 </div>
             </Card>);
     }

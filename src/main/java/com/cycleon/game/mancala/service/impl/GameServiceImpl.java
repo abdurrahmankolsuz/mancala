@@ -65,10 +65,10 @@ public class GameServiceImpl implements GameService {
             throw new GameNotFoundException(gameId);
         }
         if (Objects.isNull(game.getPlayerOne())) {
-            game.setPlayerOne(PlayerTurn.PLAYER_ONE);
+            game.setPlayerOne(Player.PLAYER_ONE);
             game.setGameStatus(GameStatus.WAITING);
         } else if (Objects.isNull(game.getPlayerTwo())) {
-            game.setPlayerTwo(PlayerTurn.PLAYER_TWO);
+            game.setPlayerTwo(Player.PLAYER_TWO);
             game.setGameStatus(GameStatus.IN_PROGRESS);
         } else {
             throw new InvalidGameException(gameId);
@@ -99,13 +99,13 @@ public class GameServiceImpl implements GameService {
 
         if (game.getPlayerTurn() == null) {
             if (pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
-                game.setPlayerTurn(PlayerTurn.PLAYER_TWO);
+                game.setPlayerTurn(Player.PLAYER_TWO);
             else
-                game.setPlayerTurn(PlayerTurn.PLAYER_ONE);
+                game.setPlayerTurn(Player.PLAYER_ONE);
         }
 
-        if (game.getPlayerTurn().equals(PlayerTurn.PLAYER_TWO) && pocketIndex > Constants.PLAYER_ONE_MANCALA_INDEX ||
-                game.getPlayerTurn().equals(PlayerTurn.PLAYER_ONE) && pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
+        if (game.getPlayerTurn().equals(Player.PLAYER_TWO) && pocketIndex > Constants.PLAYER_ONE_MANCALA_INDEX ||
+                game.getPlayerTurn().equals(Player.PLAYER_ONE) && pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX)
             throw new OpponentPocketNotAllowedException();
 
 
@@ -163,9 +163,9 @@ public class GameServiceImpl implements GameService {
 
     private void moveRight(Game game, Boolean isLastStone) {
         Integer currentPocketIndex = game.getCurrentPocketIndex() % Constants.POCKET_LAST_INDEX + 1;
-        PlayerTurn playerTurn = game.getPlayerTurn();
-        if (currentPocketIndex.equals(Constants.PLAYER_ONE_MANCALA_INDEX) && playerTurn.equals(PlayerTurn.PLAYER_ONE) ||
-                currentPocketIndex.equals(Constants.PLAYER_TWO_MANCALA_INDEX) && playerTurn.equals(PlayerTurn.PLAYER_TWO)) {
+        Player playerTurn = game.getPlayerTurn();
+        if (currentPocketIndex.equals(Constants.PLAYER_ONE_MANCALA_INDEX) && playerTurn.equals(Player.PLAYER_ONE) ||
+                currentPocketIndex.equals(Constants.PLAYER_TWO_MANCALA_INDEX) && playerTurn.equals(Player.PLAYER_TWO)) {
             currentPocketIndex = currentPocketIndex % Constants.POCKET_LAST_INDEX + 1;
         }
         game.setCurrentPocketIndex(currentPocketIndex);
@@ -194,10 +194,10 @@ public class GameServiceImpl implements GameService {
         return currentPlayerMancalaIndex;
     }
 
-    private PlayerTurn nextTurn(PlayerTurn currentTurn) {
-        if (currentTurn.equals(PlayerTurn.PLAYER_ONE))
-            return PlayerTurn.PLAYER_TWO;
-        return PlayerTurn.PLAYER_ONE;
+    private Player nextTurn(Player currentTurn) {
+        if (currentTurn.equals(Player.PLAYER_ONE))
+            return Player.PLAYER_TWO;
+        return Player.PLAYER_ONE;
     }
 
     private boolean checkGameOver(Game game) {

@@ -1,7 +1,7 @@
 package com.cycleon.game.mancala.dto;
 
 import com.cycleon.game.mancala.model.GameStatus;
-import com.cycleon.game.mancala.model.PlayerTurn;
+import com.cycleon.game.mancala.model.Player;
 import lombok.Data;
 
 import javax.persistence.EnumType;
@@ -11,9 +11,9 @@ import javax.persistence.Enumerated;
 public class GameDto {
     private Integer id;
     private BoardDto board;
-    private PlayerTurn playerOne;
-    private PlayerTurn playerTwo;
+    private Player playerOne;
+    private Player playerTwo;
     private GameStatus gameStatus;
     @Enumerated(EnumType.STRING)
-    private PlayerTurn playerTurn;
+    private Player playerTurn;
 }
