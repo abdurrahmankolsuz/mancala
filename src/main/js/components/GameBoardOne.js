@@ -8,6 +8,8 @@ import axios from "axios";
 import {GAME_MOVE_URL, GET_GAME_URL, RESPONSE_OK, TOPIC_GAME_STATUS} from "../constants/constants";
 import Result from "./Result";
 import wsClient from "../ws-client";
+import {ProgressSpinner} from "primereact/progressspinner";
+import {Toast} from "primereact/toast";
 
 class GameBoardOne extends Component {
 
@@ -16,6 +18,8 @@ class GameBoardOne extends Component {
         this.state = {
             game: this.props.game
         };
+        this.showWarn = this.showWarn.bind(this);
+
         const websocket = new wsClient();
         websocket.connect();
         websocket.subscribe(TOPIC_GAME_STATUS, this.updateGameStatus.bind(this));
@@ -28,6 +32,9 @@ class GameBoardOne extends Component {
             game: returnMessage
         })
 
+    }
+    showWarn(message) {
+        this.toast.show({severity:'warn', summary: 'Warn Message', detail:message, life: 3000});
     }
 
     getGame() {
@@ -57,76 +64,97 @@ class GameBoardOne extends Component {
                 })
             }
         }).catch(err => {
-            alert(err.response.data.message)
+            this.showWarn(err.response.data.message)
         });
     }
 
     render() {
         if (this.state.game) {
-            if (this.state.game.gameStatus === "OVER") {
-                const northStones = this.state.game.board.pockets[13].quantityOfStones;
-                const southStones = this.state.game.board.pockets[6].quantityOfStones;
-                const winner = northStones > southStones ? "Winner is PLAYER ONE" : "Winner is PLAYER TWO";
-                return (
-                    <Result winner={winner} northStones={northStones} southStones={southStones}/>
-                )
+            if (this.state.game.playerTwo) {
+                if (this.state.game.gameStatus === "OVER") {
+                    const northStones = this.state.game.board.pockets[13].quantityOfStones;
+                    const southStones = this.state.game.board.pockets[6].quantityOfStones;
+                    const winner = northStones > southStones ? "Winner is PLAYER ONE" : "Winner is PLAYER TWO";
+                    return (
+                        <Result winner={winner} northStones={northStones} southStones={southStones}/>
+                    )
+                } else {
+                    return (
+                        <div className="p-megamenu">
+                            <Toast ref={(el) => this.toast = el} position="bottom-center" />
+                            <h2><span name="player2"
+                                      className={this.state.game.playerTurn === "PLAYER_TWO" ? 'badge badge-success' : 'badge badge-secondary'}
+                                      style={{display: 'block'}}>Player 2</span></h2>
+
+                            <div className="grid">
+                                <div className="grid-item grid-item-main-pocket grid-item--width2 grid-item--height2">
+                                    <Stone stone={this.state.game.board.pockets[6].quantityOfStones}/>
+                                </div>
+                                <div className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[5].quantityOfStones}/>
+                                </div>
+                                <div className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[4].quantityOfStones}/>
+                                </div>
+                                <div className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[3].quantityOfStones}/>
+                                </div>
+                                <div className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[2].quantityOfStones}/>
+                                </div>
+                                <div className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[1].quantityOfStones}/>
+                                </div>
+                                <div className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[0].quantityOfStones}/>
+                                </div>
+
+
+                                <div onClick={() => this.sortPieces(this.state.game.id, 8)}
+                                     className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[7].quantityOfStones}/>
+                                </div>
+                                <div onClick={() => this.sortPieces(this.state.game.id, 9)}
+                                     className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[8].quantityOfStones}/>
+                                </div>
+                                <div onClick={() => this.sortPieces(this.state.game.id, 10)}
+                                     className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[9].quantityOfStones}/>
+                                </div>
+                                <div onClick={() => this.sortPieces(this.state.game.id, 11)}
+                                     className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[10].quantityOfStones}/>
+                                </div>
+                                <div onClick={() => this.sortPieces(this.state.game.id, 12)}
+                                     className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[11].quantityOfStones}/>
+                                </div>
+                                <div onClick={() => this.sortPieces(this.state.game.id, 13)}
+                                     className="grid-item grid-item-pocket">
+                                    <Stone stone={this.state.game.board.pockets[12].quantityOfStones}/>
+                                </div>
+                                <div
+                                    className="grid-item grid-item-main-pocket grid-item--width2 grid-item--height2 last-main-pocket">
+                                    <Stone stone={this.state.game.board.pockets[13].quantityOfStones}/>
+                                </div>
+                            </div>
+                            <h2><span
+                                className={this.state.game.playerTurn === "PLAYER_ONE" ? 'badge badge-success' : 'badge badge-secondary'}
+                                style={{display: 'block'}}>Player 1</span></h2>
+                        </div>
+                    );
+                }
             } else {
                 return (
-                    <div className="p-megamenu">
-                        <h2><span name="player2" className={this.state.game.playerTurn === "PLAYER_TWO" ? 'badge badge-success' : 'badge badge-secondary'} style={{display: 'block'}}>Player 2</span></h2>
-
-                        <div className="grid">
-                            <div className="grid-item grid-item-main-pocket grid-item--width2 grid-item--height2">
-                                <Stone stone={this.state.game.board.pockets[6].quantityOfStones}/>
-                            </div>
-                            <div className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[5].quantityOfStones}/>
-                            </div>
-                            <div  className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[4].quantityOfStones}/>
-                            </div>
-                            <div className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[3].quantityOfStones}/>
-                            </div>
-                            <div className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[2].quantityOfStones}/>
-                            </div>
-                            <div className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[1].quantityOfStones}/>
-                            </div>
-                            <div className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[0].quantityOfStones}/>
-                            </div>
-
-
-                            <div onClick={() => this.sortPieces(this.state.game.id, 8)} className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[7].quantityOfStones}/>
-                            </div>
-                            <div onClick={() => this.sortPieces(this.state.game.id, 9)} className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[8].quantityOfStones}/>
-                            </div>
-                            <div onClick={() => this.sortPieces(this.state.game.id, 10)} className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[9].quantityOfStones}/>
-                            </div>
-                            <div onClick={() => this.sortPieces(this.state.game.id, 11)} className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[10].quantityOfStones}/>
-                            </div>
-                            <div onClick={() => this.sortPieces(this.state.game.id, 12)} className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[11].quantityOfStones}/>
-                            </div>
-                            <div onClick={() => this.sortPieces(this.state.game.id, 13)} className="grid-item grid-item-pocket">
-                                <Stone stone={this.state.game.board.pockets[12].quantityOfStones}/>
-                            </div>
-                            <div className="grid-item grid-item-main-pocket grid-item--width2 grid-item--height2 last-main-pocket">
-                                <Stone stone={this.state.game.board.pockets[13].quantityOfStones}/>
-                            </div>
-                        </div>
-                        <h2><span className={this.state.game.playerTurn === "PLAYER_ONE" ? 'badge badge-success' : 'badge badge-secondary'} style={{display: 'block'}}>Player 1</span></h2>
-                    </div>
-                );
+                    <div><h4><span className="badge badge-warning">Waiting for opponent...</span></h4></div>
+                )
             }
         }
-        return null;
+        return  (
+            <div><ProgressSpinner/></div>
+        );
     }
 }
+
 export default GameBoardOne

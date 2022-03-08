@@ -7,11 +7,19 @@ import GameBoardOne from "./components/GameBoardOne.js";
 import * as ReactDOM from "react-dom";
 import {Button} from "primereact/button";
 import axios from "axios";
-import {CREATE_GAME_URL, GET_AVAILABLE_GAME_URL, JOIN_GAME_URL, RESPONSE_OK} from "/src/main/js/constants/constants";
+import {
+    CREATE_GAME_URL,
+    GET_AVAILABLE_GAME_URL,
+    JOIN_GAME_URL,
+    RESPONSE_OK, TOPIC_GAME_AVAILABLE_URL,
+    TOPIC_GAME_STATUS
+} from "/src/main/js/constants/constants";
 import {Menubar} from "primereact/menubar";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import GameBoardTwo from "./components/GameBoardTwo";
+import { Toast } from 'primereact/toast';
+import wsClient from "./ws-client";
 
 class App extends React.Component {
 
@@ -21,9 +29,25 @@ class App extends React.Component {
             game: null,
             games: []
         }
-
+        this.showWarn = this.showWarn.bind(this);
         this.handleStartGame = this.handleStartGame.bind(this);
         this.createGame = this.createGame.bind(this);
+        const websocket = new wsClient();
+        websocket.connect();
+        websocket.subscribe(TOPIC_GAME_AVAILABLE_URL, this.updateAvailableGames.bind(this));
+
+    }
+
+    showWarn(message) {
+        this.toast.show({severity:'warn', summary: 'Warn Message', detail:message, life: 3000});
+    }
+
+    updateAvailableGames(message) {
+        let returnMessage = JSON.parse(message.body);
+        this.setState({
+            games: returnMessage
+        })
+
     }
 
     componentDidMount() {
@@ -35,7 +59,6 @@ class App extends React.Component {
             .then(res => {
                 this.setState(prevState => {
                     return {
-                        games: [...prevState.games, res.data],
                         game: res.data
                     }
                 });
@@ -70,7 +93,7 @@ class App extends React.Component {
                 });
             }
         }).catch(err => {
-            alert(err.response.data.message)
+            this.showWarn(err.response.data.message)
         });
 
 
@@ -88,7 +111,6 @@ class App extends React.Component {
     }
 
     actionBodyTemplate = (item) => {
-        console.log("XXXX")
         return <Button className="btn btn-primary btn-lg" onClick={() => this.handleStartGame(item.id)}>Join
             Game</Button>;
 
@@ -99,6 +121,7 @@ class App extends React.Component {
         const start = <h3>MANCALA (KALAH) GAME</h3>;
         return (
             <div className="App">
+                <Toast ref={(el) => this.toast = el} position="bottom-center" />
                 <Menubar start={start} end={<Button className="btn btn-primary btn-lg" onClick={this.createGame}>Create
                     Game</Button>}/>
                 <div className="p-grid">

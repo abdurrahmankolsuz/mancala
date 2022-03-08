@@ -52,7 +52,7 @@ public class GameServiceImpl implements GameService {
         game.setGameStatus(GameStatus.NEW);
         gameRepository.saveAndFlush(game);
         log.info("Game: {} created successfully!", game.getId());
-
+        notifyGameList(getAllAvailableGames());
         return gameMapper.toDTO(game);
     }
 
@@ -67,13 +67,17 @@ public class GameServiceImpl implements GameService {
         if (Objects.isNull(game.getPlayerOne())) {
             game.setPlayerOne(Player.PLAYER_ONE);
             game.setGameStatus(GameStatus.WAITING);
+            gameRepository.saveAndFlush(game);
         } else if (Objects.isNull(game.getPlayerTwo())) {
             game.setPlayerTwo(Player.PLAYER_TWO);
             game.setGameStatus(GameStatus.IN_PROGRESS);
+            gameRepository.saveAndFlush(game);
+            notifyGame(gameMapper.toDTO(game));
         } else {
             throw new InvalidGameException(gameId);
         }
-        gameRepository.saveAndFlush(game);
+
+        notifyGameList(getAllAvailableGames());
         return gameMapper.toDTO(game);
     }
 

@@ -8,7 +8,8 @@ import axios from "axios";
 import {GAME_MOVE_URL, GET_GAME_URL, RESPONSE_OK, TOPIC_GAME_STATUS} from "../constants/constants";
 import Result from "./Result";
 import wsClient from "../ws-client";
-
+import {ProgressSpinner} from "primereact/progressspinner";
+import {Toast} from "primereact/toast";
 class GameBoardTwo extends Component {
 
     constructor(props) {
@@ -16,6 +17,7 @@ class GameBoardTwo extends Component {
         this.state = {
             game: this.props.game
         };
+        this.showWarn = this.showWarn.bind(this);
         const websocket = new wsClient();
         websocket.connect();
         websocket.subscribe(TOPIC_GAME_STATUS, this.updateGameStatus.bind(this));
@@ -28,6 +30,9 @@ class GameBoardTwo extends Component {
             game: returnMessage
         })
 
+    }
+    showWarn(message) {
+        this.toast.show({severity:'warn', summary: 'Warn Message', detail:message, life: 3000});
     }
 
     sortPieces(gameId, pocketId) {
@@ -42,7 +47,7 @@ class GameBoardTwo extends Component {
                 })
             }
         }).catch(err => {
-            alert(err.response.data.message)
+            this.showWarn(err.response.data.message)
         });
     }
 
@@ -58,6 +63,7 @@ class GameBoardTwo extends Component {
             } else {
                 return (
                     <div className="p-megamenu">
+                        <Toast ref={(el) => this.toast = el} position="bottom-center" />
                         <h2><span className={this.state.game.playerTurn === "PLAYER_ONE" ? 'badge badge-success' : 'badge badge-secondary'} style={{display: 'block'}}>Player 1</span></h2>
                         <div className="grid">
                             <div className="grid-item grid-item-main-pocket grid-item--width2 grid-item--height2">
@@ -110,7 +116,9 @@ class GameBoardTwo extends Component {
                 );
             }
         }
-        return null;
+        return  (
+            <div><ProgressSpinner/></div>
+        );
     }
 }
 
