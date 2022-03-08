@@ -9,14 +9,14 @@ import {Button} from "primereact/button";
 import axios from "axios";
 import {
     CREATE_GAME_URL,
-    GET_AVAILABLE_GAME_URL, GET_GAME_URL,
-    RESPONSE_OK,
-    TOPIC_GAME_AVAILABLE_URL
+    GET_AVAILABLE_GAME_URL,
+    GET_GAME_URL,
+    JOIN_GAME_URL,
+    RESPONSE_OK
 } from "/src/main/js/constants/constants";
 import {Menubar} from "primereact/menubar";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
-import wsClient from "./ws-client";
 
 class App extends React.Component {
 
@@ -29,31 +29,13 @@ class App extends React.Component {
 
         this.handleStartGame = this.handleStartGame.bind(this);
         this.createGame = this.createGame.bind(this);
-
-
-        // const websocket = new wsClient();
-        // websocket.connect();
-        // websocket.subscribe(TOPIC_GAME_AVAILABLE_URL, this.updateAvailableGames.bind(this));
-
     }
 
-    // updateAvailableGames(message) {
-    //     let returnMessage = JSON.parse(message.body);
-    //     console.log("xxxx "+ returnMessage)
-    //     this.setState({
-    //         games: returnMessage
-    //     })
-    //
-    // }
-
-    //
     componentDidMount() {
-        // this.createGame();
         this.getAllGames();
     }
 
     createGame() {
-        console.log("test")
         axios.post(CREATE_GAME_URL)
             .then(res => {
                 this.setState(prevState => {
@@ -66,11 +48,25 @@ class App extends React.Component {
             });
     }
 
-    handleStartGame() {
-        ReactDOM.render(
-            <Game game={this.state.game}/>,
-            document.getElementById('root')
-        )
+    handleStartGame(id) {
+        debugger;
+        axios.post(JOIN_GAME_URL, {
+                gameId: id
+            }
+        ).then(res => {
+            if (res.status === RESPONSE_OK) {
+                this.setState({
+                    game: res.data
+                }, () => {
+                    ReactDOM.render(
+                        <Game game={this.state.game}/>,
+                        document.getElementById('root')
+                    )
+                });
+            }
+        });
+
+
     }
 
     getAllGames() {
@@ -84,50 +80,27 @@ class App extends React.Component {
             });
     }
 
-    actionBodyTemplate(item) {
-            axios.get(GET_GAME_URL, {
-                    params: {
-                        id: item.id
-                    }
-                }
-            ).then(res => {
-                if (res.status === RESPONSE_OK) {
-                    this.setState({
-                        game: res.data
-                    })
-                }
-            });
-
-        return <Button className="btn btn-primary btn-lg" onClick={this.handleStartGame}>Join
+    actionBodyTemplate = (item) => {
+        console.log("XXXX")
+        return <Button className="btn btn-primary btn-lg" onClick={() => this.handleStartGame(item.id)}>Join
             Game</Button>;
 
     }
 
 
     render() {
-        // return (
-        //     <div className="App">
-        //         <Card title="MANCALA GAME">
-        //
-        //         </Card>
-        //     </div>
-        // )
-
-        const start = <h3>MANCALA(KALAH) GAME</h3>;
+        const start = <h3>MANCALA (KALAH) GAME</h3>;
         return (
             <div className="App">
-                <Menubar start={start}
-                         end={<Button className="btn btn-primary btn-lg" onClick={this.createGame}>Create
-                             Game</Button>}
-                />
+                <Menubar start={start} end={<Button className="btn btn-primary btn-lg" onClick={this.createGame}>Create
+                    Game</Button>}/>
                 <div className="p-grid">
                     <div className="p-col">
-                        <DataTable value={this.state.games}
-                        >
+                        <DataTable value={this.state.games} dataKey="id">
                             <Column field="id" header="Game ID"/>
                             <Column field="gameStatus" header="Game Status"/>
                             <Column field="action" header="Action" headerClassName="sm-invisible"
-                                    bodyClassName="sm-invisible" body={(e) => this.actionBodyTemplate(e)}></Column>
+                                    bodyClassName="sm-invisible" body={this.actionBodyTemplate}></Column>
                         </DataTable>
                     </div>
                 </div>
