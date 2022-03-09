@@ -8,13 +8,13 @@
 # Introduction
 [**How to Play Mancala?**](https://www.youtube.com/watch?v=OX7rj93m6o8)
 
-##Mancala Rules
+## Mancala Rules
 
-###Setup
+### Setup
 The Mancala 'board' is made up of two rows of six holes, or pits, each. If you don't have a Mancala board handy, an empty egg carton can work. Next, four pieces -- marbles or stones -- are placed in each of the 12 holes. The color of the pieces is irrelevant.
 Each player has a 'store' to the right side of the Mancala board. (Cereal bowls work well for this purpose.)
 
-###Play
+### Play
 The game begins with one player picking up all the pieces in any one of the holes on his side.
 Moving counter-clockwise, the player deposits one of the stones in each hole until the stones run out.
 
@@ -26,11 +26,11 @@ Moving counter-clockwise, the player deposits one of the stones in each hole unt
 
 4. Always place all captured pieces in your store.
 
-###Winning the game
+### Winning the game
 The game ends when all six spaces on one side of the Mancala board are empty. The player who still has pieces on his side of the board when the game ends captures all of those pieces.
 Count all the pieces in each store. The winner is the player with the most pieces.
 
-###Tips:
+### Tips:
 Planning ahead is essential to victory in board games like Mancala. Try to plan two or three moves into the future.
 
 # Technology Stack
