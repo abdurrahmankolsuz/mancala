@@ -48,17 +48,20 @@ For building and running the application you need:
 There are several ways to run a Spring Boot application on your local machine.
 
 * With Maven
-
-```shell
-mvn spring-boot:run
-```
+1. Enter the `mancala` folder:  
+   ``$ cd mancala``
+2. Execute the following maven command to clean the target folder and generate the distributable .jar file **(this command will ignore the unit tests)**:  
+   ``$ mvn clean install -DskipTests``
+3. Run the jar file with following command.
+   ``$ java -jar target/mancala-0.0.1-SNAPSHOT.jar``
+   
 
 * With IDE. This app coded with Intellij IDEA. Open project and run/debug below class.
 ```shell
 MancalaGameApplication.java
 ```
 
-* With Docker and docker-compose (Recommended)
+* With Docker and docker-compose (**Recommended**)
 
 Execute the following commands in order to build and generate the docker container images:
 
@@ -71,8 +74,7 @@ Execute the following commands in order to build and generate the docker contain
 4. Execute the following command to run application with postgres container:  
    ``$ docker-compose up``
    
-
-The Mancala game will be served on ``localhost:8080``. You can play with opponent using two browser. Enjoy it!
+The Mancala game will be served on ``localhost:8080``. You can play with opponent using two browsers. Enjoy it!
 
 ![mancala](https://github.com/abdurrahmankolsuz/mancala/blob/master/mancala.gif)
 
