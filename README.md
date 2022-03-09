@@ -47,6 +47,7 @@ Planning ahead is essential to victory in board games like Mancala. Try to plan 
 
 ## Installation
 
+![mancala](https://github.com/abdurrahmankolsuz/mancala/blob/master/mancala.gif)
 
 ## LICENSE
 
