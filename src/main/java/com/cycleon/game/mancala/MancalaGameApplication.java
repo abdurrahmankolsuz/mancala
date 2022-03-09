@@ -10,8 +10,6 @@ import java.sql.SQLException;
 public class MancalaGameApplication {
 
 	public static void main(String[] args) throws SQLException {
-		DbMigration dbMigration = new DbMigration();
-		dbMigration.initDb();
 		SpringApplication.run(MancalaGameApplication.class, args);
 	}
 

@@ -1,36 +1,38 @@
-version: "3"
+version: '3.7'
 
 services:
-  postgres:
-    container_name: postgres_container
-    image: postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      PGDATA: /data/postgres
-    volumes:
-       - postgres:/data/postgres
-
-    ports:
-      - "5432:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
-
   mancala:
-    container_name: mancala
     image: mancala
-    networks:
-      - postgres
+    build:
+      context: .
+    container_name: mancala
     ports:
-        - "8080:8080"
-    restart: unless-stopped
+      - 8080:8080
+    networks:
+      - cycleon
     depends_on:
-        - postgres
-
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mancala
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  db:
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    ports:
+      - 5432:5432
+    networks:
+      - cycleon
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mancala
+      - PGDATA=/data/postgres
+    volumes:
+      - postgre_data:/data/postgres
 networks:
-  postgres:
+  cycleon:
     driver: bridge
-
 volumes:
-    postgres:
+  postgre_data:
