@@ -18,8 +18,8 @@ services:
     restart: unless-stopped
 
   mancala:
-    container_name: mancala-backend
-    image: mancala-backend
+    container_name: mancala
+    image: mancala
     networks:
       - postgres
     ports:
