@@ -33,24 +33,33 @@ Count all the pieces in each store. The winner is the player with the most piece
 ### Tips:
 Planning ahead is essential to victory in board games like Mancala. Try to plan two or three moves into the future.
 
-# Technology Stack
-* `Spring Boot v2.3.1`
-* `Spring Data JPA`
-* `Stomp`
-* `PostgreSQL`
-* `react v16.12.0`
-* `Stompjs`
-* `primereact`
-* `Maven`
-* `Docker`
-
-
 # Build
-### Prerequisites
-* `Java SDK` and `Maven`, for building;
-* `Docker` to build and run the application containers;
 
-### Run application
+## Requirements
+
+For building and running the application you need:
+
+- [JDK 13](https://www.oracle.com/java/technologies/javase/jdk13-archive-downloads.html)
+- [Maven 3.5.2](https://maven.apache.org)
+- [Docker](https://docs.docker.com/get-docker/)
+
+## Run application
+
+There are several ways to run a Spring Boot application on your local machine.
+
+* With Maven
+
+```shell
+mvn spring-boot:run
+```
+
+* With IDE. This app coded with Intellij IDEA. Open project and run/debug below class.
+```shell
+MancalaGameApplication.java
+```
+
+* With Docker and docker-compose (Recommended)
+
 Execute the following commands in order to build and generate the docker container images:
 
 1. Enter the `mancala` folder:  
