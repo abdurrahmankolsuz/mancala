@@ -10,14 +10,13 @@
 
     <groupId>com.cycleon.game</groupId>
     <artifactId>mancala</artifactId>
-    <version>0.0.6-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>mancala</name>
     <description>Mancala Game</description>
 
     <properties>
         <java.version>11</java.version>
-        <netty.version>4.1.39.Final</netty.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
