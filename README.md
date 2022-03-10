@@ -39,7 +39,7 @@ Planning ahead is essential to victory in board games like Mancala. Try to plan 
 
 For building and running the application you need:
 
-- [JDK 13](https://www.oracle.com/java/technologies/javase/jdk13-archive-downloads.html)
+- [JDK 1.8 or higher](https://www.oracle.com/java/technologies/javase/jdk13-archive-downloads.html)
 - [Maven 3.5.2](https://maven.apache.org)
 - [Docker](https://docs.docker.com/get-docker/)
 
@@ -47,21 +47,33 @@ For building and running the application you need:
 
 There are several ways to run a Spring Boot application on your local machine.
 
-* With Maven
+### Prerequisite for Maven or IDE ways 
+>*hint : You do not need these steps if you choose the docker way*
+
+  1.You have to have PostgreSQL Server running on your local machine on default port `5432`
+  
+  2.You have to run following command ``` CREATE SCHEMA IF NOT EXISTS `mancala`;``` to create schema on your local machine.
+### * With Maven
+
+
+
+
 1. Enter the `mancala` folder:  
    ``$ cd mancala``
 2. Execute the following maven command to clean the target folder and generate the distributable .jar file **(this command will ignore the unit tests)**:  
    ``$ mvn clean install -DskipTests``
 3. Run the jar file with following command.
    ``$ java -jar target/mancala-0.0.1-SNAPSHOT.jar``
-   
 
-* With IDE. This app coded with Intellij IDEA. Open project and run/debug below class.
+
+### *  With IDE
+  This app coded with Intellij IDEA. Open project and run/debug below class.
+
 ```shell
 MancalaGameApplication.java
 ```
 
-* With Docker and docker-compose (**Recommended**)
+### *  With Docker and docker-compose (**Recommended**)
 
 Execute the following commands in order to build and generate the docker container images:
 
