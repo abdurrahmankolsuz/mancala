@@ -182,7 +182,7 @@ public class GameServiceImpl implements GameService {
         }
 
         Pocket oppositePocket = game.getBoard().getPockets().stream().filter(p -> p.getPocketIdentifier().equals(Constants.POCKET_LAST_INDEX - finalCurrentPocketIndex)).findFirst().get();
-        if (targetPocket.getQuantityOfStones().equals(Constants.EMPTY_STONE) && oppositePocket.getQuantityOfStones().equals(Constants.EMPTY_STONE)) {
+        if (isLastStone && targetPocket.getQuantityOfStones().equals(Constants.EMPTY_STONE) && isLastStoneDroppedPlayerSide(playerTurn, finalCurrentPocketIndex)) {
             Integer numberOfOppositePocket = oppositePocket.getQuantityOfStones();
             oppositePocket.setQuantityOfStones(Constants.EMPTY_STONE);
             Integer currentPlayerMancalaIndex = getCurrentPlayerMancalaIndex(currentPocketIndex);
@@ -191,6 +191,16 @@ public class GameServiceImpl implements GameService {
             return;
         }
         targetPocket.setQuantityOfStones(targetPocket.getQuantityOfStones() + 1);
+    }
+
+    private boolean isLastStoneDroppedPlayerSide(Player playerTurn, Integer pocketIndex) {
+        if (playerTurn.equals(Player.PLAYER_TWO) && pocketIndex < Constants.PLAYER_ONE_MANCALA_INDEX) {
+            return true;
+        } else if (playerTurn.equals(Player.PLAYER_ONE) && pocketIndex < Constants.PLAYER_TWO_MANCALA_INDEX && pocketIndex > Constants.PLAYER_ONE_MANCALA_INDEX) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private Integer getCurrentPlayerMancalaIndex(Integer currentPocketIndex) {
